@@ -1,0 +1,84 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-width: 320px;
+    height: 100%;
+}
+
+body {
+    font-size: 62.5%;
+    font-family: "Open Sans", sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: #2487D7;
+}
+
+a:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+#header {
+    font-size: 1.5rem;
+    padding: 1.5rem;
+}
+
+#console {
+    padding: 1rem 1.5rem;
+}
+
+#source {
+    font-size: 1.25rem;
+    font-family: monospace;
+    margin-top: 1rem;
+    padding: .5rem;
+    border: 1px solid #b3b3b3;
+}
+
+#output {
+    display: none;
+    font-size: 1.25rem;
+    font-family: monospace;
+    margin-top: 1rem;
+    padding: .5rem;
+    border: 1px solid #b3b3b3;
+}
+
+#select-example {
+    font-size: 1.5rem;
+    padding: 5px;
+}
+
+.button {
+    display: inline-block;
+    height: 3rem;
+    padding: 0 1rem;
+    margin-right: 2rem;
+    line-height: 3rem;
+    font-size: 1.5rem;
+    text-align: center;
+    vertical-align: middle;
+    color: #2487D7;
+    border: 1px solid #e0e0e0;
+    background-color: #f9f9f9;
+    -webkit-box-shadow: 0px 1px 3px 1px rgba(238,238,238,0.3);
+    -moz-box-shadow: 0px 1px 3px 1px rgba(238,238,238,0.3);
+    box-shadow: 0px 1px 3px 1px rgba(238,238,238,0.3);
+}
+
+.button:last-of-type {
+    margin-right: 0;
+}
+
+.button:hover {
+    cursor: pointer;
+    border-color: #b3b3b3;
+}
+
+.selected {
+    background-color: #d8d8d8;
+    border-color: #b3b3b3;
+}
