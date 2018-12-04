@@ -2,13 +2,21 @@
 * JavaScript Singly Linked List (LL)
 *
 * @author Christopher Keers <source@Caboodle.tech>
+* @param {*} [data] - Element to start the LL with.
+* @returns {SinglyLinkedList} Returns itself. JavaScript equivalent of a class.
 */
-function SinglyLinkedList(){
+function SinglyLinkedList( data ){
 
     /** Declare default list properties. */
     this.head = null;
     this.tail = null;
     this.length = 0;
+
+    /** JavaScript equivalent constructor. */
+    if( data ){
+        this.head = new SinglyLink( data );
+        this.length++;
+    }
 }
 
 SinglyLinkedList.prototype = {
@@ -18,28 +26,28 @@ SinglyLinkedList.prototype = {
     *
     * @alias push
     */
-    add: function( elem ){
-        this.push( elem );
+    add: function( data ){
+        this.push( data );
     },
     /**
     * Add an element to the LL after an existing element.
     *
     * @param {Object} existing - The existing element in the LL.
-    * @param {Object} elem - The new element to add into the LL.
+    * @param {*} data - The new element to add into the LL.
     * @param {Function} [callback] - A callback function that can handle the comparison of the elements instead.
     * @returns {Boolean} True if the element was inserted false otherwise.
     */
-    addAfter: function( existing, elem, callback ){
+    addAfter: function( existing, data, callback ){
         var current = this.head;
         if( callback ){
-            callback = eval(callback); // Only needed if using the demo sites tests.
+            callback = eval( callback ); // Only needed if using the demo sites tests.
             while( current != null ){
-                if( callback( existing, current.value ) ){
+                if( callback( existing, current.data ) ){
                     if( current.next == null ){
-                        current.next = new SinglyLink( elem );
+                        current.next = new SinglyLink( data );
                         this.tail = current.next;
                     } else {
-                        current.next = new SinglyLink( elem, current.next );
+                        current.next = new SinglyLink( data, current.next );
                     }
                     this.length++;
                     return true;
@@ -48,12 +56,12 @@ SinglyLinkedList.prototype = {
             }
         } else {
             while( current != null ){
-                if( current.value == existing ){
+                if( current.data == existing ){
                     if( current.next == null ){
-                        current.next = new SinglyLink( elem );
+                        current.next = new SinglyLink( data );
                         this.tail = current.next;
                     } else {
-                        current.next = new SinglyLink( elem, current.next );
+                        current.next = new SinglyLink( data, current.next );
                     }
                     this.length++;
                     return true;
@@ -66,23 +74,23 @@ SinglyLinkedList.prototype = {
     /**
     * Add an element to the LL before an existing element.
     *
-    * @param {Object} existing - The existing element in the LL.
-    * @param {Object} elem - The new element to add into the LL.
+    * @param {*} existing - The existing element in the LL.
+    * @param {*} data - The new element to add into the LL.
     * @param {Function} [callback] - A callback function that can handle the comparison of the elements instead.
     * @returns {Boolean} True if the element was inserted false otherwise.
     */
-    addBefore: function( existing, elem, callback ){
+    addBefore: function( existing, data, callback ){
         var current = this.head;
         var previous = current;
         if( callback ){
             callback = eval(callback); // Only needed if using the demo sites tests.
-            if( callback( existing, this.head.value ) ){
-                this.head = new SinglyLink( elem, current );
+            if( callback( existing, this.head.data ) ){
+                this.head = new SinglyLink( data, current );
                 return true;
             }
             while( current != null ){
-                if( callback( existing, current.value )  ){
-                    previous.next = new SinglyLink( elem, current );
+                if( callback( existing, current.data )  ){
+                    previous.next = new SinglyLink( data, current );
                     this.length++;
                     return true
                 }
@@ -90,13 +98,13 @@ SinglyLinkedList.prototype = {
                 current = current.next;
             }
         } else {
-            if( this.head.value == existing ){
-                this.head = new SinglyLink( elem, current );
+            if( this.head.data == existing ){
+                this.head = new SinglyLink( data, current );
                 return true;
             }
             while( current != null ){
-                if( current.value == existing ){
-                    previous.next = new SinglyLink( elem, current );
+                if( current.data == existing ){
+                    previous.next = new SinglyLink( data, current );
                     this.length++;
                     return true
                 }
@@ -111,8 +119,8 @@ SinglyLinkedList.prototype = {
     *
     * @alias unshift
     */
-    addFirst: function( elem ){
-        this.unshift( elem );
+    addFirst: function( data ){
+        this.unshift( data );
     },
     /**
     * Make a clone of the current LL.
@@ -123,7 +131,7 @@ SinglyLinkedList.prototype = {
         var LL = new SinglyLinkedList();
         var current = this.head;
         while( current != null ){
-            LL.push( current.value );
+            LL.push( current.data );
             current = current.next;
         }
         return LL;
@@ -145,11 +153,11 @@ SinglyLinkedList.prototype = {
     * @returns {Object|Null} The last element in the LL or null if list was empty.
     */
     pop: function(){
-        var elem = null;
+        var data = null;
         var current = this.head;
         if( this.tail == null ){
             if( this.head != null ){
-                elem = this.head.value;
+                data = this.head.data;
                 this.head = null;
                 this.length--;
             }
@@ -157,7 +165,7 @@ SinglyLinkedList.prototype = {
             var current = this.head;
             while( current != null ){
                 if( current.next == this.tail ){
-                    elem = current.next.value;
+                    data = current.next.data;
                     current.next = null;
                     if( current == this.head ){
                         this.tail = null;
@@ -169,7 +177,7 @@ SinglyLinkedList.prototype = {
                 current = current.next;
             }
         }
-        return elem;
+        return data;
     },
     /** Force garbage collection of LL and nodes. */
     purge: function(){
@@ -191,18 +199,18 @@ SinglyLinkedList.prototype = {
     /**
     * Add an element to the tail of the LL.
     *
-    * @param {Object} elem - The element to add to the LL.
+    * @param {*} data - The element to add to the LL.
     */
-    push: function( elem ){
+    push: function( data ){
         if( !this.head ){
-            this.head = new SinglyLink( elem );
+            this.head = new SinglyLink( data );
             this.length++;
         } else if( !this.tail ) {
-            this.tail = new SinglyLink( elem );
+            this.tail = new SinglyLink( data );
             this.head.next = this.tail;
             this.length++;
         } else {
-            this.tail.next = new SinglyLink( elem );
+            this.tail.next = new SinglyLink( data );
             this.tail = this.tail.next;
             this.length++;
         }
@@ -237,9 +245,9 @@ SinglyLinkedList.prototype = {
     * @returns {Object|Null} The first element in the LL or null if list was empty.
     */
     shift: function(){
-        var elem = null;
+        var data = null;
         if( this.head != null ){
-            elem = this.head.value;
+            data = this.head.data;
             if( this.head.next != this.tail ){
                 this.head = this.head.next;
             } else {
@@ -248,7 +256,7 @@ SinglyLinkedList.prototype = {
             }
             this.length--;
         }
-        return elem;
+        return data;
     },
     /**
     * Convert the LL to an associated array.
@@ -260,7 +268,7 @@ SinglyLinkedList.prototype = {
         var current = this.head;
         var index = 0;
         while( current != null ){
-            ary[index] = current.value;
+            ary[index] = current.data;
             index++;
             current = current.next;
         }
@@ -273,14 +281,14 @@ SinglyLinkedList.prototype = {
     /**
     * Add an element to the head of the LL.
     *
-    * @param {Object} elem - The element to add to the LL.
+    * @param {*} data - The element to add to the LL.
     */
-    unshift: function( elem ){
+    unshift: function( data ){
         if( !this.head ){
-            this.head = new SinglyLink( elem );
+            this.head = new SinglyLink( data );
             this.length++;
         } else {
-            this.head = new SinglyLink( elem, this.head );
+            this.head = new SinglyLink( data, this.head );
             this.length++;
         }
     }
@@ -291,10 +299,10 @@ SinglyLinkedList.prototype = {
 *
 * @author Christopher Keers <source@Caboodle.tech>
 */
-function SinglyLink( elem, child ){
+function SinglyLink( data, child ){
 
     /** Declare default node properties. */
-    this.value = elem;
+    this.data = data;
     this.next = child;
 }
 
@@ -302,7 +310,7 @@ SinglyLink.prototype = {
 
     /** Force garbage collection of the node. */
     purge: function(){
-        this.value = null;
+        this.data = null;
         this.next = null;
     }
 }
@@ -315,7 +323,7 @@ SinglyLink.prototype = {
 */
 function runTests(){
 
-    var output = document.getElementById('output');
+    var output = document.getElementById( 'output' );
 
     /** Only run test if the output DIV was found. */
     if( output ){
@@ -356,7 +364,7 @@ function runTests(){
         ];
 
         /** Note that the test is starting. */
-        var node = document.createElement('DIV');
+        var node = document.createElement( 'DIV' );
         node.innerHTML = 'Testing Singly Linked Lists.<br>============================<br><br>';
         output.appendChild( node );
 
@@ -368,7 +376,7 @@ function runTests(){
         for( var x = 0; x < testCount; x++ ){
 
             /** Note that a new test is running. */
-            node = document.createElement('DIV');
+            node = document.createElement( 'DIV' );
             node.innerHTML = 'Test => ';
             output.appendChild( node );
 
@@ -377,7 +385,7 @@ function runTests(){
             for( var y = 0; y < sampleCount; y++ ){
 
                 /** Split the method and the data and run the result. */
-                var parts = tests[x][0][y].split(':');
+                var parts = tests[x][0][y].split( ':' );
 
                 /** Handle multiple parameters and log our actions. */
                 switch( parts.length ){
@@ -412,18 +420,18 @@ function runTests(){
             if( result == expected ){ grade = ' (Pass)'; }
 
             /** Print the current state. */
-            node = document.createElement('DIV');
+            node = document.createElement( 'DIV' );
             node.innerHTML = '&nbsp;Current State: ' + result + grade;
             output.appendChild( node );
 
             /** Print the expected state. */
-            node = document.createElement('DIV');
+            node = document.createElement( 'DIV' );
             node.innerHTML = 'Expected State: ' + expected + '<br><br>';
             output.appendChild( node );
 
             /** Reset the List for the next test. */
             LinkedList.reset();
-            node = document.createElement('DIV');
+            node = document.createElement( 'DIV' );
             node.innerHTML = 'Test Done. Reset.<br>=================<br><br>';
             output.appendChild( node );
 
