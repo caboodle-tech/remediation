@@ -14,7 +14,7 @@ function DoublyLinkedList( data ){
 
     /** JavaScript equivalent constructor. */
     if( data ){
-        this.head = new DoublyLink( data );
+        this.head = new DoublyLink( data, null, null );
         this.length++;
     }
 }
@@ -44,10 +44,10 @@ DoublyLinkedList.prototype = {
             while( current != null ){
                 if( callback( existing, current.data ) ){
                     if( current.next == null ){
-                        current.next = new DoublyLink( data );
+                        current.next = new DoublyLink( data, current, null );
                         this.tail = current.next;
                     } else {
-                        current.next = new DoublyLink( data, current.next );
+                        current.next = new DoublyLink( data, current, current.next );
                     }
                     this.length++;
                     return true;
@@ -58,10 +58,10 @@ DoublyLinkedList.prototype = {
             while( current != null ){
                 if( current.data == existing ){
                     if( current.next == null ){
-                        current.next = new DoublyLink( data );
+                        current.next = new DoublyLink( data, current, null );
                         this.tail = current.next;
                     } else {
-                        current.next = new DoublyLink( data, current.next );
+                        current.next = new DoublyLink( data, current, current.next );
                     }
                     this.length++;
                     return true;
@@ -238,7 +238,7 @@ DoublyLinkedList.prototype = {
                 current = current.next
             }
         } else {
-            if( existing = current.data ){
+            if( existing == current.data ){
                 this.head = this.head.next;
                 current.purge();
                 this.length--;
@@ -337,7 +337,7 @@ DoublyLinkedList.prototype = {
     */
     unshift: function( data ){
         if( !this.head ){
-            this.head = new DoublyLink( data );
+            this.head = new DoublyLink( data, null, null );
             this.length++;
         } else {
             this.head = new DoublyLink( data, null, this.head );
