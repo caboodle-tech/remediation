@@ -234,7 +234,7 @@ SinglyLinkedList.prototype = {
     /**
     * Return and remove the first node in the LL.
     *
-    * @alias shift
+    * @returns {Object|Null} The first element in the LL or null if list was empty.
     */
     shift: function(){
         var elem = null;
