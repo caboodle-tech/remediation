@@ -22,7 +22,7 @@ a:hover {
 }
 
 #header {
-    font-size: 1.5rem;
+    font-size: 1.45rem;
     padding: 1.5rem;
 }
 
@@ -31,10 +31,9 @@ a:hover {
 }
 
 #source {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-family: monospace;
     margin-top: 1rem;
-    padding: .5rem;
     border: 1px solid #b3b3b3;
 }
 
@@ -81,4 +80,12 @@ a:hover {
 .selected {
     background-color: #d8d8d8;
     border-color: #b3b3b3;
+}
+
+pre[class*="language-"] {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    overflow: auto;
 }

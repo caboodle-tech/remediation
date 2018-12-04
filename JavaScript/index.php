@@ -13,6 +13,8 @@ $example = $_GET['example'];
     <title>JavaScript</title>
     <meta name="description" content="JavaScript remediation examples.">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../prism.css">
+    <script src="../prism.js" type="text/javascript"></script>
     <script type="text/javascript">
         /** Handle when the user toggles page views. */
         function toggleView( view ){
@@ -92,7 +94,7 @@ $example = $_GET['example'];
             </div>
         </div>
         <div id="source">
-<?php
+<pre><code class="line-numbers language-javascript"><?php
     /** If an example has been choosen display it's source code. */
     if( $example ){
         if( file_exists( $example ) ){
@@ -110,9 +112,10 @@ $example = $_GET['example'];
         }
     } else {
         /** No file was choosen. */
-        echo 'Please choose an example from the drop down menu.';
+        echo '/** Please choose an example from the drop down menu. */';
     }
 ?>
+</code></pre>
         </div>
         <div id="output">
             There is nothing to show. Please choose an example from the drop down menu.
