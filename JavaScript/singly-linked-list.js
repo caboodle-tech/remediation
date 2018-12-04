@@ -344,6 +344,14 @@ function runTests(){
             [
                 ['add:B', 'add:D', 'add:E', 'addBefore:B:A:compare', 'addBefore:D:C'],
                 ['A', 'B', 'C', 'D', 'E']
+            ],
+            [
+                ['push:A', 'push:B', 'push:C', 'push:D', 'push:E', 'pop', 'pop'],
+                ['A', 'B', 'C']
+            ],
+            [
+                ['push:A', 'push:B', 'push:C', 'push:D', 'push:E', 'shift', 'shift'],
+                ['C', 'D', 'E']
             ]
         ];
 
@@ -382,9 +390,13 @@ function runTests(){
                         node.innerHTML =  node.innerHTML + parts[0] + '(' + parts[1] + ',' + parts[2] + ') ';
                         break;
                     case 2:
-                    default:
                         LinkedList[ parts[0] ]( parts[1] );
                         node.innerHTML =  node.innerHTML + parts[0] + '(' + parts[1] + ') ';
+                        break;
+                    case 1:
+                    default:
+                        LinkedList[ parts[0] ]();
+                        node.innerHTML =  node.innerHTML + parts[0] + '() ';
                 }
 
             }
