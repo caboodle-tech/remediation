@@ -1,11 +1,11 @@
 /**
-* JavaScript Singly Linked List (LL)
+* JavaScript Doubly Linked List (LL)
 *
 * @author Christopher Keers <source@Caboodle.tech>
 * @param {*} [data] - Element to start the LL with.
-* @returns {SinglyLinkedList} Returns itself. JavaScript equivalent of a class.
+* @returns {DoublyLinkedList} Returns itself. JavaScript equivalent of a class.
 */
-function SinglyLinkedList( data ){
+function DoublyLinkedList( data ){
 
     /** Declare default list properties. */
     this.head = null;
@@ -14,12 +14,12 @@ function SinglyLinkedList( data ){
 
     /** JavaScript equivalent constructor. */
     if( data ){
-        this.head = new SinglyLink( data );
+        this.head = new DoublyLink( data );
         this.length++;
     }
 }
 
-SinglyLinkedList.prototype = {
+DoublyLinkedList.prototype = {
 
     /**
     * Add an element to the LL.
@@ -44,10 +44,10 @@ SinglyLinkedList.prototype = {
             while( current != null ){
                 if( callback( existing, current.data ) ){
                     if( current.next == null ){
-                        current.next = new SinglyLink( data );
+                        current.next = new DoublyLink( data );
                         this.tail = current.next;
                     } else {
-                        current.next = new SinglyLink( data, current.next );
+                        current.next = new DoublyLink( data, current.next );
                     }
                     this.length++;
                     return true;
@@ -58,10 +58,10 @@ SinglyLinkedList.prototype = {
             while( current != null ){
                 if( current.data == existing ){
                     if( current.next == null ){
-                        current.next = new SinglyLink( data );
+                        current.next = new DoublyLink( data );
                         this.tail = current.next;
                     } else {
-                        current.next = new SinglyLink( data, current.next );
+                        current.next = new DoublyLink( data, current.next );
                     }
                     this.length++;
                     return true;
@@ -81,34 +81,35 @@ SinglyLinkedList.prototype = {
     */
     addBefore: function( existing, data, callback ){
         var current = this.head;
-        var previous = current;
         if( callback ){
             callback = eval(callback); // Only needed if using the demo sites tests.
             if( callback( existing, this.head.data ) ){
-                this.head = new SinglyLink( data, current );
+                this.head = new DoublyLink( data, null, current );
+                this.head.next.previous = this.head;
                 return true;
             }
             while( current != null ){
                 if( callback( existing, current.data )  ){
-                    previous.next = new SinglyLink( data, current );
+                    current.previous.next = new DoublyLink( data, current.previous, current );
+                    current.previous.next.next.previous = current.previous.next;
                     this.length++;
                     return true
                 }
-                previous = current;
                 current = current.next;
             }
         } else {
             if( this.head.data == existing ){
-                this.head = new SinglyLink( data, current );
+                this.head = new DoublyLink( data, null, current );
+                this.head.next.previous = this.head;
                 return true;
             }
             while( current != null ){
                 if( current.data == existing ){
-                    previous.next = new SinglyLink( data, current );
+                    current.previous.next = new DoublyLink( data, current.previous, current );
+                    current.previous.next.next.previous = current.previous.next;
                     this.length++;
                     return true
                 }
-                previous = current;
                 current = current.next;
             }
         }
@@ -125,10 +126,10 @@ SinglyLinkedList.prototype = {
     /**
     * Make a clone of the current LL.
     *
-    * @returns {SinglyLinkedList} A new Singly Linked List cloned from this Linked List.
+    * @returns {DoublyLinkedList} A new Doubly Linked List cloned from this Linked List.
     */
     clone: function(){
-        var LL = new SinglyLinkedList();
+        var LL = new DoublyLinkedList();
         var current = this.head;
         while( current != null ){
             LL.push( current.data );
@@ -147,35 +148,23 @@ SinglyLinkedList.prototype = {
     /**
     * Return and remove the last node in the LL.
     *
-    * NOTE: This is over complicated because we do not have a
-    * doubly linked list where we can go back nodes in the list.
-    *
-    * @returns {Object|Null} The last element in the LL or null if list was empty.
+    * @returns {*|Null} The last element in the LL or null if list was empty.
     */
     pop: function(){
         var data = null;
-        var current = this.head;
         if( this.tail == null ){
             if( this.head != null ){
                 data = this.head.data;
+                this.head.purge();
                 this.head = null;
                 this.length--;
             }
         } else {
-            var current = this.head;
-            while( current != null ){
-                if( current.next == this.tail ){
-                    data = current.next.data;
-                    current.next = null;
-                    if( current == this.head ){
-                        this.tail = null;
-                    } else {
-                        this.tail = current;
-                    }
-                    this.length--;
-                }
-                current = current.next;
-            }
+            data = this.tail.data;
+            this.tail = this.tail.previous;
+            this.tail.next.purge();
+            this.tail.next = null;
+            this.length--;
         }
         return data;
     },
@@ -203,14 +192,14 @@ SinglyLinkedList.prototype = {
     */
     push: function( data ){
         if( !this.head ){
-            this.head = new SinglyLink( data );
+            this.head = new DoublyLink( data, null, null );
             this.length++;
         } else if( !this.tail ) {
-            this.tail = new SinglyLink( data );
+            this.tail = new DoublyLink( data, this.head, null );
             this.head.next = this.tail;
             this.length++;
         } else {
-            this.tail.next = new SinglyLink( data );
+            this.tail.next = new DoublyLink( data, this.tail, null );
             this.tail = this.tail.next;
             this.length++;
         }
@@ -218,51 +207,57 @@ SinglyLinkedList.prototype = {
     /**
     * Remove a specific node (link) from the LL.
     *
-    * NOTE: This is over complicated because we do not have a
-    * doubly linked list where we can go back nodes in the list.
-    *
     * @param {*} existing - The node that you want to remove.
     * @param {Function} [callback] - A callback function that can handle the comparison of the elements instead.
     * @returns {Boolean} True if the node was found and removed otherwise false.
     */
     remove: function( existing, callback ){
         var current = this.head;
-        var previous = null;
         if( callback ){
             callback = eval(callback); // Only needed if using the demo sites tests.
+            if( callback( existing, current.data ) ){
+                this.head = this.head.next;
+                current.purge();
+                this.length--;
+                return true;
+            }
+            current = current.next;
             while( current != null ){
                 if( callback( existing, current.data ) ){
-                    if( previous == null ){
-                        this.head = current.next;
-                    } else if( current.next == null ) {
-                        this.tail = previous;
-                        previous.next = null;
+                    if( current.next == null ) {
+                        this.tail = current.previous;
+                        this.tail.next = null;
                     } else {
-                        previous.next = current.next;
+                        current.previous.next = current.next;
+                        current.next.previous = current.previous;
                     }
                     this.length--;
                     current.purge();
                     return true;
                 }
-                previous = current;
                 current = current.next
             }
         } else {
+            if( existing = current.data ){
+                this.head = this.head.next;
+                current.purge();
+                this.length--;
+                return true;
+            }
+            current = current.next;
             while( current != null ){
                 if( existing == current.data ){
-                    if( previous == null ){
-                        this.head = current.next;
-                    } else if( current.next == null ) {
-                        this.tail = previous;
-                        previous.next = null;
+                    if( current.next == null ) {
+                        this.tail = current.previous;
+                        this.tail.next = null;
                     } else {
-                        previous.next = current.next;
+                        current.previous.next = current.next;
+                        current.next.previous = current.previous;
                     }
                     this.length--;
                     current.purge();
                     return true;
                 }
-                previous = current;
                 current = current.next
             }
         }
@@ -303,8 +298,12 @@ SinglyLinkedList.prototype = {
             data = this.head.data;
             if( this.head.next != this.tail ){
                 this.head = this.head.next;
+                this.head.previous.purge();
+                this.head.previous = null;
             } else {
                 this.head = this.head.next;
+                this.head.previous.purge();
+                this.head.previous = null;
                 this.tail = null;
             }
             this.length--;
@@ -338,32 +337,35 @@ SinglyLinkedList.prototype = {
     */
     unshift: function( data ){
         if( !this.head ){
-            this.head = new SinglyLink( data );
+            this.head = new DoublyLink( data );
             this.length++;
         } else {
-            this.head = new SinglyLink( data, this.head );
+            this.head = new DoublyLink( data, null, this.head );
+            this.head.next.previous = this.head;
             this.length++;
         }
     }
 };
 
 /**
-* JavaScript Singly LL node (Link)
+* JavaScript Doubly LL node (Link)
 *
 * @author Christopher Keers <source@Caboodle.tech>
 */
-function SinglyLink( data, child ){
+function DoublyLink( data, parent, child ){
 
     /** Declare default node properties. */
     this.data = data;
+    this.previous = parent;
     this.next = child;
 }
 
-SinglyLink.prototype = {
+DoublyLink.prototype = {
 
     /** Force garbage collection of the node. */
     purge: function(){
         this.data = null;
+        this.previous = null;
         this.next = null;
     }
 }
@@ -430,11 +432,11 @@ function runTests(){
 
         /** Note that the test is starting. */
         var node = document.createElement( 'DIV' );
-        node.innerHTML = 'Testing Singly Linked Lists.<br>============================<br><br>';
+        node.innerHTML = 'Testing Doubly Linked Lists.<br>============================<br><br>';
         output.appendChild( node );
 
-        /** Create a new Singly List. */
-        var LinkedList = new SinglyLinkedList();
+        /** Create a new Doubly List. */
+        var LinkedList = new DoublyLinkedList();
 
         /** Loop through each test. */
         var testCount = tests.length;
