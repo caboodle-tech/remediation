@@ -118,7 +118,7 @@ $example = $_GET['example'];
 </code></pre>
         </div>
         <div id="output">
-            There is nothing to show. Please choose an example from the drop down menu.
+            There is nothing to show. This script does not have a test to run or you have not selected a script from the drop down menu.
         </div>
     </div>
 <?php

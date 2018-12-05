@@ -1,14 +1,14 @@
 /**
-* JavaScript Tree
+* JavaScript Balanced Tree
 *
 * NOTE: This is not a plain tree, it is a self balancing
 * tree that will automatically handle staying balanced.
 *
 * @author Christopher Keers <source@Caboodle.tech>
 * @param {*} [data] - Element to start the tree with.
-* @returns {Tree} Returns itself. JavaScript equivalent of a class.
+* @returns {BalancedTree} Returns itself. JavaScript equivalent of a class.
 */
-function Tree( data ){
+function BalancedTree( data ){
 
     /** Declare default list properties. */
     this.root = null;
@@ -21,7 +21,7 @@ function Tree( data ){
     }
 }
 
-Tree.prototype = {
+BalancedTree.prototype = {
     add: function( data ){
 
         if( this.root == null ){
@@ -93,6 +93,17 @@ Tree.prototype = {
                 break;
         }
     },
+    _deleteTree: function( currentNode ){
+        if( currentNode != null ){
+            /** Delete the current nodes subtrees first. */
+            this._deleteTree( currentNode.left );
+            this._deleteTree( currentNode.right );
+
+            /** Delete the current node. */
+            currentNode.purge();
+        }
+        return;
+    },
     _doubleLeftRotation: function( currentParent ){
         this._singleRightRotation( currentParent.right );
         // Now its a single left
@@ -114,7 +125,103 @@ Tree.prototype = {
 			}
 		}
 	},
+    getHeight: function(){
+        if( this.root == null ){
+            return -1;
+        }
+        if( this.root.left == null && this.root.right == null ){
+            return 0;
+        }
+        return ( this._maxDepth( this.root ) - 1 );
+    },
+    // https://www.geeksforgeeks.org/write-a-c-program-to-find-the-maximum-depth-or-height-of-a-tree/
+    _maxDepth: function( currentNode ){
+        if( currentNode == null ){
+            return 0;
+        } else {
+
+            /** Recursively count the levels in the tree. */
+            var leftDepth = this._maxDepth( currentNode.left );
+            var rightDepth = this._maxDepth( currentNode.right );
+
+            /** Use the largest number. */
+            if ( leftDepth > rightDepth ) {
+                return ( leftDepth + 1 );
+            } else {
+                return ( rightDepth + 1 );
+            }
+        }
+    },
+    purge: function(){
+        this._deleteTree( this.root );
+        this.root = null;
+        this.size = 0;
+    },
     remove: function( data ){
+        /** Do we have a tree to check? */
+        if( this.root ){
+            /** Yes. Check for the data and remove it. */
+            return this._removeNode( data, this.root );
+        }
+        /** No. There isn't a tree to search in. */
+        return false;
+    },
+    _removeNode: function( data, currentNode ){
+        // TODO: ADD SELF BALANCING INTO THIS!!!
+        /** Is this the node to remove? */
+        if( data == currentNode.data){
+            // Yes
+            if( currentNode.left == null && currentNode.right == null ){
+                // Leaf node
+                if( currentNode.parent.left == currentNode ){
+                    currentNode.parent.left = null;
+                } else {
+                    currentNode.parent.right = null;
+                }
+            } else if( currentNode.left != null && currentNode.right == null ){
+                if( currentNode.parent.left == currentNode ){
+                    currentNode.parent.left = currentNode.left;
+                    currentNode.parent.left.parent = currentNode.parent;
+                } else {
+                    currentNode.parent.right = currentNode.left;
+                    currentNode.parent.right.parent = currentNode.parent;
+                }
+            } else if( currentNode.left == null && currentNode.right != null ){
+                if( currentNode.parent.left == currentNode ){
+                    currentNode.parent.left = currentNode.right;
+                    currentNode.parent.left.parent = currentNode.parent;
+                } else {
+                    currentNode.parent.right = currentNode.right;
+                    currentNode.parent.right.parent = currentNode.parent;
+                }
+            } else {
+                // Has 2 children
+            }
+            this.size--;
+            return true;
+        } else {
+            // No
+            if( data < currentNode.data ){
+                // Left
+                if( currentNode.left ){
+                    return this._removeNode( data, currentNode.left );
+                }
+            } else {
+                // Right
+                if( currentNode.right ){
+                    return this._removeNode( data, currentNode.right );
+                }
+            }
+        }
+        /** The data was never found in this tree. */
+        return false;
+    },
+    /**
+    * Reset the tree.
+    *
+    * @alias purge
+    */
+    reset: function(){
 
     },
     _singleLeftRotation: function( oldParent ){
@@ -172,3 +279,14 @@ function Node( data ){
     this.left = null;
     this.right = null;
 }
+
+Node.prototype = {
+
+    purge: function(){
+        this.data = null;
+        this.balance = null;
+        this.parent = null;
+        this.left = null;
+        this.right = null;
+    }
+};
